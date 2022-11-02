@@ -50,6 +50,22 @@ public class Model {
         return isChanged;
     }
 
+    public void rotation () {
+
+        Tile[][] result = new Tile [FIELD_WIDTH][FIELD_WIDTH];
+
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            for (int j = 0; j < FIELD_WIDTH; j++) {
+                result[i][j] = gameTiles[FIELD_WIDTH - j - 1][i];
+            }
+        }
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            for (int j = 0; j < FIELD_WIDTH; j++) {
+                gameTiles[i][j] = result[i][j];
+            }
+        }
+    }
+
     public void left() {
         boolean moveFlag = false;
         for (int i = 0; i < FIELD_WIDTH; i++) {
@@ -60,6 +76,29 @@ public class Model {
         if (moveFlag) {
             addTile();
         }
+    }
+
+    public void right() {
+        rotation();
+        rotation();
+        left();
+        rotation();
+        rotation();
+    }
+
+    public void down() {
+        rotation();
+        left();
+        rotation();
+        rotation();
+        rotation();
+    }
+    public void up() {
+        rotation();
+        rotation();
+        rotation();
+        left();
+        rotation();
     }
 
     private List<Tile> getEmptyTiles() {
