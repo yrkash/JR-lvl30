@@ -17,28 +17,27 @@ public class Model {
         resetGameTiles();
     }
 
-    private void compressTiles(Tile[] tiles) {
-        List<Tile> emptyList = new ArrayList<>();
-        List<Tile> numberList = new ArrayList<>();
-        for (int i = 0; i < tiles.length; i++) {
-            if (tiles[i].value == 0) {
-                emptyList.add(tiles[i]);
+    private boolean compressTiles(Tile[] tiles) {
+        int insertPosition = 0;
+        boolean result = false;
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            if (!tiles[i].isEmpty()) {
+                if (i != insertPosition) {
+                    tiles[insertPosition] = tiles[i];
+                    tiles[i] = new Tile();
+                    result = true;
+                }
+                insertPosition++;
             }
-            else {
-                numberList.add(tiles[i]);
-            }
         }
-        for (int i = 0; i < numberList.size(); i++) {
-            tiles[i] = numberList.get(i);
-        }
-        for (int i = 0; i < emptyList.size(); i++) {
-            tiles[i + numberList.size()] = emptyList.get(i);
-        }
+        return result;
     }
 
-    private void mergeTiles(Tile[] tiles) {
+    private boolean mergeTiles(Tile[] tiles) {
+        boolean isChanged = false;
         for (int i = 0; i < tiles.length - 1; i++) {
             if (tiles[i].value == tiles[i + 1].value && tiles[i].value != 0) {
+                isChanged = true;
                 int updatedValue = tiles[i].value * 2;
 
                 if (maxTile < updatedValue) maxTile = updatedValue;
@@ -48,6 +47,19 @@ public class Model {
             }
         }
         compressTiles(tiles);
+        return isChanged;
+    }
+
+    public void left() {
+        boolean moveFlag = false;
+        for (int i = 0; i < FIELD_WIDTH; i++) {
+            if (compressTiles(gameTiles[i]) | mergeTiles(gameTiles[i])) {
+                moveFlag = true;
+            }
+        }
+        if (moveFlag) {
+            addTile();
+        }
     }
 
     private List<Tile> getEmptyTiles() {
