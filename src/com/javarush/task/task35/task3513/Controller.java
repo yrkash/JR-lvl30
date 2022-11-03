@@ -9,6 +9,10 @@ public class Controller extends KeyAdapter {
     private Model model;
     private View view;
 
+    public View getView() {
+        return view;
+    }
+
     private int WINNING_TILE = 2048;
 
     public Controller(Model model) {

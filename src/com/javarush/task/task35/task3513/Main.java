@@ -1,25 +1,24 @@
 package com.javarush.task.task35.task3513;
 
+import javax.swing.*;
+
 public class Main {
     public static void main(String[] args) {
-        Model m = new Model();
-        m.gameTiles = new Tile[][]{{new Tile(4), new Tile(2), new Tile(8), new Tile(16)},
-                {new Tile(2), new Tile(4), new Tile(16), new Tile(8)},
-                {new Tile(4), new Tile(32), new Tile(8), new Tile(16)},
-                {new Tile(2), new Tile(4), new Tile(16), new Tile(8)}};
+        Model model = new Model();
+        Controller controller = new Controller(model);
+        JFrame game = new JFrame();
 
-        printGame(m.gameTiles);
-//        m.rotation();
-        System.out.println(m.canMove());
-        printGame(m.gameTiles);
+        game.setTitle("2048");
+        game.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        game.setSize(450, 500);
+        game.setResizable(false);
 
+        game.add(controller.getView());
+
+
+        game.setLocationRelativeTo(null);
+        game.setVisible(true);
     }
-    public static void printGame(Tile[][] gameTiles) {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(gameTiles[i][j].value + " ");
-            }
-            System.out.println();
-        }
-    }
+
+
 }
