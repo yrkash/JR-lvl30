@@ -3,6 +3,7 @@ package com.javarush.task.task35.task3513;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class Model {
@@ -12,6 +13,28 @@ public class Model {
 
     int score;
     int maxTile;
+
+    private Stack<Tile[][]> previousStates = new Stack<>();
+    private Stack<Integer> previousScores = new Stack<>();
+
+    private boolean isSaveNeeded = true;
+
+    private void saveState(Tile[][] tiles) {
+        Tile[][] saveTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];
+        for (int x = 0; x < FIELD_WIDTH; x++) {
+            for (int y = 0; y < FIELD_WIDTH; y++) {
+                saveTiles[x][y] = new Tile(gameTiles[x][y].value);
+            }
+        }
+        previousStates.push(saveTiles);
+        previousScores.push(score);
+        isSaveNeeded = false;
+    }
+
+    public void rollback() {
+        if (!previousStates.isEmpty()) gameTiles = previousStates.pop();
+        if (!previousScores.isEmpty()) score = previousScores.pop();
+    }
 
     public Tile[][] getGameTiles() {
         return gameTiles;
@@ -23,6 +46,24 @@ public class Model {
 
     private boolean isFull() {
         return getEmptyTilesCount() == 0;
+    }
+
+    public void randomMove() {
+        int n = ((int)(Math.random() * 100)) % 4;
+        switch (n) {
+            case 0:
+                left();
+                break;
+            case 1:
+                right();
+                break;
+            case 2:
+                up();
+                break;
+            case 3:
+                down();
+                break;
+        }
     }
 
     boolean canMove() {
@@ -97,18 +138,21 @@ public class Model {
     }
 
     public void left() {
+        if (isSaveNeeded) saveState(gameTiles);
         boolean moveFlag = false;
         for (int i = 0; i < FIELD_WIDTH; i++) {
             if (compressTiles(gameTiles[i]) | mergeTiles(gameTiles[i])) {
                 moveFlag = true;
             }
         }
+        isSaveNeeded = true;
         if (moveFlag) {
             addTile();
         }
     }
 
     public void right() {
+        saveState(gameTiles);
         rotation();
         rotation();
         left();
@@ -116,6 +160,7 @@ public class Model {
         rotation();
     }
     public void down() {
+        saveState(gameTiles);
         rotation();
         left();
         rotation();
@@ -123,6 +168,7 @@ public class Model {
         rotation();
     }
     public void up() {
+        saveState(gameTiles);
         rotation();
         rotation();
         rotation();

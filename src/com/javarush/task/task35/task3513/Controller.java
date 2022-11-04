@@ -32,6 +32,14 @@ public class Controller extends KeyAdapter {
             view.isGameLost = true;
         }
 
+        if (e.getKeyCode() == KeyEvent.VK_Z) {
+            model.rollback();
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_R) {
+            model.randomMove();
+        }
+
         if (!view.isGameWon && !view.isGameLost) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
