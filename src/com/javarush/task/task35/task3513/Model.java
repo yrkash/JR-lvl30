@@ -1,9 +1,6 @@
 package com.javarush.task.task35.task3513;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Model {
@@ -18,6 +15,47 @@ public class Model {
     private Stack<Integer> previousScores = new Stack<>();
 
     private boolean isSaveNeeded = true;
+
+    public void autoMove() {
+        PriorityQueue<MoveEfficiency> queue =
+                new PriorityQueue<>(4 , Collections.reverseOrder());
+        Move leftMove = new Move() {
+            @Override
+            public void move() {
+                left();
+            }
+        };
+        queue.offer(getMoveEfficiency(leftMove));
+        queue.offer(getMoveEfficiency(this::right));
+        queue.offer(getMoveEfficiency(()->up()));
+        queue.offer(getMoveEfficiency(this::down));
+        queue.peek().getMove().move();
+
+    }
+
+    public boolean hasBoardChanged() {
+        boolean boardChanged = false;
+        Tile[][] testTiles = previousStates.peek();
+        for (int x = 0; x < FIELD_WIDTH; x++) {
+            for (int y = 0; y < FIELD_WIDTH; y++) {
+                if (testTiles[x][y].value != gameTiles[x][y].value) {
+                    boardChanged = true;
+                    break;
+                }
+            }
+        }
+        return boardChanged;
+    }
+
+    public MoveEfficiency getMoveEfficiency(Move move) {
+        move.move();
+        MoveEfficiency moveEfficiency =
+                new MoveEfficiency(getEmptyTiles().size(),score,move);
+        if (!hasBoardChanged()) return new MoveEfficiency(-1,0, move);
+        rollback();
+        return moveEfficiency;
+    }
+
 
     private void saveState(Tile[][] tiles) {
         Tile[][] saveTiles = new Tile[FIELD_WIDTH][FIELD_WIDTH];

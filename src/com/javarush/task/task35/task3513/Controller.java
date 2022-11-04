@@ -40,6 +40,10 @@ public class Controller extends KeyAdapter {
             model.randomMove();
         }
 
+        if (e.getKeyCode() == KeyEvent.VK_A) {
+            model.autoMove();
+        }
+
         if (!view.isGameWon && !view.isGameLost) {
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
